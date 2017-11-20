@@ -4,16 +4,38 @@ const cheerio = require('cheerio')
 const _ = require("lodash")
 var beautify = require("json-beautify");
 
-// YOUR SETTINGS //
-var TopPairs = 5 // How many TopX volume pairs you want to get from CoinMarketCap
+// BASIC SETTINGS //
+var checkVolume = false // Check for top BTC-pairs?
+var TopPairs = 5 // Number of TopX volume pairs you want to get from CoinMarketCap
 var Exchange = 'bittrex' // Your exchange, currently bittrex and poloniex are supported
-var changeBTC = 2.5
-var panicSell = false
+var UpdateTime = 5 // Minutes - Run an update every X minutes
+
+// BTC PUMP SETTINGS
+var checkPump = false // Check for BTC pump?
+var pumpUp = 2.5 // % - Stop buying your BTC-pairs if BTC price is up more than X-percent
+var pumpTime = 1 // hour(s) - BTC price change
+var activateTV = true // Activate TradingView addon to buy/sell USDT-pairs (requires TV addon and email alerts)
+
+// MARKET TREND
+var checkTrend = true // Check for overall market trend change?
+var trendUp = 1.5 // % - Start buying BTC-pairs if overall market trend is up more than X-percent
+var trendDown = 1.5 // % - Stop buying BTC-pairs if overall market trend is down more than X-percent
+var trendTime = 1 // hour(s) - BTC price change
+var activateTV = true // Activate TradingView addon to buy/sell USDT-pairs (requires TV addon and email alerts)
+
+// PANIC?
+var panicSell = false // This option will sell ALL your open positions at the current market price - see official GB wiki
+
+// MULTI GB SETUP (In development - coming soon)
+var multiGB = false // Set "true" if you uare using multiple GB instances and define the paths below
+var configPath1 = "../GB-1/"
+var configPath2 = "../GB-2/"
+var configPath3 = "../GB-3/"
 
 // DON'T TOUCH //
 var pairs = []
 var topVolume = []
-var url = 'https://coinmarketcap.com/exchanges/'+Exchange+'/'
+var cmcExchanges = 'https://coinmarketcap.com/exchanges/'+Exchange+'/'
 
 // Build the new config file
 function buildConfig(topVolumePairs) {
@@ -58,16 +80,6 @@ function buildConfig(topVolumePairs) {
     }
 
     writeConfig(currentConfig, 'example-config.js')
-
-    // Here we have several options how to do this... but i'm stuck comparing the two json arrays and replace/append/prepend them
-    // feel free to help out here :)
-    //
-    // Option 1: By Volume: Stop buying pairs that are not in Top Volume:
-    //           get pairs from topVolume array and set override BUY_ENABLED=FALSE for pairs in curConfig array,
-    //           then prepend pairs to curConfig that are rising up in volume and start buying these coins
-
-    // Option 2: By Market Trend: If topX pairs (except BTC) go down, stop buying altcoins and activate TV addon
-    //           to buy/sell USDT-BTC until BTC goes bearish again and we start buying altcoins by enabling buys
 }
 
 // Read the current config.js file and return the JSON
@@ -97,25 +109,34 @@ function buildPairs() {
     buildConfig(topVolume)
 }
 // Scrape TopX volume pairs from CoinMarketCap
-request(url,(error,response,html)=>{
-    var $ = cheerio.load(html)
-    $('#markets > div.table-responsive > table > tbody > tr > td > a').each((i,element)=>{
-        var omg = $(element).attr('href')
-        if(Exchange == 'bittrex') {
-            if(omg.match(/MarketName/i)) {
-                var pair = omg.replace("https://bittrex.com/Market/Index?MarketName=","")
-                if (pair.match(/^(BTC-)/i)) {
-                    pairs.push(pair)
+if(checkVolume) {
+    request(cmcExchanges,(error,response,html)=>{
+        var $ = cheerio.load(html)
+        $('#markets > div.table-responsive > table > tbody > tr > td > a').each((i,element)=>{
+            var omg = $(element).attr('href')
+            if(Exchange == 'bittrex') {
+                if(omg.match(/MarketName/i)) {
+                    var pair = omg.replace("https://bittrex.com/Market/Index?MarketName=","")
+                    if (pair.match(/^(BTC-)/i)) {
+                        pairs.push(pair)
+                    }
+                }
+            } else if(Exchange == 'poloniex') {
+                if(omg.match(/exchange/i)) {
+                    var pair = omg.replace("https://poloniex.com/exchange/#","")
+                    if (pair.match(/^(btc_)/i)) {
+                        pairs.push(pair)
+                    }
                 }
             }
-        } else if(Exchange == 'poloniex') {
-            if(omg.match(/exchange/i)) {
-                var pair = omg.replace("https://poloniex.com/exchange/#","")
-                if (pair.match(/^(btc_)/i)) {
-                    pairs.push(pair)
-                }
-            }
-        }
+        });
+        setTimeout(buildPairs, 3000)
     });
-    setTimeout(buildPairs, 3000)
-});
+}
+if(checkTrend) {
+    request('https://api.coinmarketcap.com/v1/ticker/?limit=100', { json: true }, (err, res, body) => {
+      if (err) { return console.log(err); }
+      var average = _.meanBy(body, (b) => parseInt(b.percent_change_1h))
+      console.log("Top 100 Coins Trend: " + average)
+    });
+}
