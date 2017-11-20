@@ -2,7 +2,7 @@ const fs = require('fs-extra')
 const request = require('request')
 const cheerio = require('cheerio')
 const _ = require("lodash")
-var beautify = require("json-beautify");
+const beautify = require("json-beautify");
 
 // BASIC SETTINGS //
 var checkVolume = false // Check for top BTC-pairs?
@@ -27,7 +27,7 @@ var activateTV = true // Activate TradingView addon to buy/sell USDT-pairs (requ
 // PANIC?
 var panicSell = false // This option will sell ALL your open positions at the current market price - see official GB wiki
 
-// MULTI GB SETUP (In development - coming soon)
+// MULTI GB SETUP (Still in development)
 var multiGB = false // Set "true" if you uare using multiple GB instances and define the paths below
 var configPath1 = "../GB-1/"
 var configPath2 = "../GB-2/"
