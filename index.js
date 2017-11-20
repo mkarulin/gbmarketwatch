@@ -57,7 +57,7 @@ function buildConfig(topVolumePairs) {
         console.log("Exchange not specified. Please check the settings.")
     }
 
-    writeConfig(currentConfig, 'example-config-test.js')
+    writeConfig(currentConfig, 'example-config.js')
 
     // Here we have several options how to do this... but i'm stuck comparing the two json arrays and replace/append/prepend them
     // feel free to help out here :)
