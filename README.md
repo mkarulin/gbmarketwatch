@@ -1,6 +1,11 @@
-# GBMarketWatch
-Version 0.0.1-beta
+# GBMarketWatch (0.1-alpha)
 THIS SCRIPT IS STILL IN DEVELOPMENT - USE AT OWN RISK
+
+An extendable script that compares your pairs with trading volume and overall market trend.
+Depending on the current market trend the script can enable/disable buy orders or activate 
+the TradingView addon to stop altcoin trades and switch to USDT-pair trading. 
+
+More to come....
 
 ## Requirements
 nodejs & npm
