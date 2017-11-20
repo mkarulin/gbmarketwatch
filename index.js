@@ -8,7 +8,7 @@ const beautify = require("json-beautify");
 var checkVolume = false // Check for top BTC-pairs?
 var TopPairs = 5 // Number of TopX volume pairs you want to get from CoinMarketCap
 var Exchange = 'bittrex' // Your exchange, currently bittrex and poloniex are supported
-var UpdateTime = 5 // Minutes - Run an update every X minutes
+var Update = 1 // Update interval in minutes - Run an update every X minutes
 
 // BTC PUMP SETTINGS
 var checkPump = false // Check for BTC pump?
@@ -109,37 +109,47 @@ function buildPairs() {
     }
     buildConfig(topVolume)
 }
-// Scrape TopX volume pairs from CoinMarketCap
-if(checkVolume) {
-    request(cmcExchanges,(error,response,html)=>{
-        var $ = cheerio.load(html)
-        $('#markets > div.table-responsive > table > tbody > tr > td > a').each((i,element)=>{
-            var omg = $(element).attr('href')
-            if(Exchange == 'bittrex') {
-                if(omg.match(/MarketName/i)) {
-                    var pair = omg.replace("https://bittrex.com/Market/Index?MarketName=","")
-                    if (pair.match(/^(BTC-)/i)) {
-                        pairs.push(pair)
+// Run every X minutes
+
+function updateData() {
+    // Scrape TopX volume pairs from CoinMarketCap
+    if(checkVolume) {
+        request(cmcExchanges,(error,response,html)=>{
+            var $ = cheerio.load(html)
+            $('#markets > div.table-responsive > table > tbody > tr > td > a').each((i,element)=>{
+                var omg = $(element).attr('href')
+                if(Exchange == 'bittrex') {
+                    if(omg.match(/MarketName/i)) {
+                        var pair = omg.replace("https://bittrex.com/Market/Index?MarketName=","")
+                        if (pair.match(/^(BTC-)/i)) {
+                            pairs.push(pair)
+                        }
+                    }
+                } else if(Exchange == 'poloniex') {
+                    if(omg.match(/exchange/i)) {
+                        var pair = omg.replace("https://poloniex.com/exchange/#","")
+                        if (pair.match(/^(btc_)/i)) {
+                            pairs.push(pair)
+                        }
                     }
                 }
-            } else if(Exchange == 'poloniex') {
-                if(omg.match(/exchange/i)) {
-                    var pair = omg.replace("https://poloniex.com/exchange/#","")
-                    if (pair.match(/^(btc_)/i)) {
-                        pairs.push(pair)
-                    }
-                }
-            }
+            });
+            setTimeout(buildPairs, 3000)
         });
-        setTimeout(buildPairs, 3000)
-    });
+    }
+    if(checkTrend) {
+        request('https://api.coinmarketcap.com/v1/ticker/?limit='+checkCoins, { json: true }, (err, res, body) => {
+            if (err) { return console.log(err); }
+            if (trendTime=="1h") var average = _.meanBy(body, (b) => parseInt(b.percent_change_1h))
+            if (trendTime=="24h") var average = _.meanBy(body, (b) => parseInt(b.percent_change_24h))
+            if (trendTime=="7d") var average = _.meanBy(body, (b) => parseInt(b.percent_change_7d))
+            console.log("Top "+checkCoins+" Coins Trend ("+trendTime+"): " + average + "%")
+        });
+    }
 }
-if(checkTrend) {
-    request('https://api.coinmarketcap.com/v1/ticker/?limit='+checkCoins, { json: true }, (err, res, body) => {
-        if (err) { return console.log(err); }
-        if (trendTime=="1h") var average = _.meanBy(body, (b) => parseInt(b.percent_change_1h))
-        if (trendTime=="24h") var average = _.meanBy(body, (b) => parseInt(b.percent_change_24h))
-        if (trendTime=="7d") var average = _.meanBy(body, (b) => parseInt(b.percent_change_7d))
-        console.log("Top "+checkCoins+" Coins Trend ("+trendTime+"): " + average)
-    });
+function runUpdate() { 
+    updateData()
+    setInterval(updateData, Update*60*1000) 
 }
+console.log("Update every: "+Update+" Minute(s)")
+runUpdate()

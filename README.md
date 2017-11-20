@@ -12,7 +12,8 @@ nodejs & npm
 
 ## Roadmap
 - [x] Compare pairs in config.js with TopX volume pairs of your exchange and update config file
-- [ ] Automatic update every X minutes
+- [x] Automatic update every X minutes
 - [ ] Update config depending on market trend (stop trading altcoins, activate TV mode for USDT-pairs)
 - [ ] Work with multiple config files in different folders for several GB instances
-- [ ] Telegram notifications about changes
+- [ ] Simple Desktop UI for Windows, Mac and Linux
+- [ ] Telegram notifications
