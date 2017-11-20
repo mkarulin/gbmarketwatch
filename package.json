@@ -1,0 +1,31 @@
+{
+  "name": "gbmarketwatch",
+  "version": "0.0.1",
+  "description": "Updates your GB config.js by checking the current market trend",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nomad5am/gbmarketwatch.git"
+  },
+  "keywords": [
+    "bittrex"
+  ],
+  "author": "nomad5am",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nomad5am/gbmarketwatch.git/issues"
+  },
+  "engines": {
+    "node": "8.6.0"
+  },
+  "homepage": "https://github.com/nomad5am/gbmarketwatch.git#readme",
+  "dependencies": {
+    "fs": "latest",
+    "request": "latest",
+    "cheerio": "latest",
+    "lodash": "latest"
+  }
+}
