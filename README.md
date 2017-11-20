@@ -1,17 +1,18 @@
 # GBMarketWatch
 Version 0.0.1-beta
-THIS SCRIPT IS STILL IN DEVELOPMENT AND NOT YET MEANT TO BE USED IN PRODUCTION
+THIS SCRIPT IS STILL IN DEVELOPMENT - USE AT OWN RISK
 
 ## Requirements
 nodejs & npm
 
 ## Install
-- git clone or download the .zip and extract in your GB folder
+- git clone or download the .zip
 - run: npm install
+- run: node index.js
 
 ## Roadmap
 - [x] Compare pairs in config.js with TopX volume pairs of your exchange and update config file
-- [ ] Work with multiple config files in different folders for several GB instances
 - [ ] Automatic update every X minutes
-- [ ] Update configs depending on market trend (stop trading altcoins, activate TV mode for USDT-pairs)
+- [ ] Update config depending on market trend (stop trading altcoins, activate TV mode for USDT-pairs)
+- [ ] Work with multiple config files in different folders for several GB instances
 - [ ] Telegram notifications about changes
