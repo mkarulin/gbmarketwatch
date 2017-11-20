@@ -1,6 +1,9 @@
 # GBMarketWatch
 v0.0.1: Get TopX Coins by Volume from CoinMarketCap
 
+To-Do:
+- Compare current config with updated pairs and write to config file
+
 ## Requirements
 nodejs & npm
 
