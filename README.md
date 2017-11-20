@@ -13,6 +13,7 @@ nodejs & npm
 ## Roadmap
 - [x] Compare pairs in config.js with TopX volume pairs of your exchange and update config file
 - [x] Automatic update every X minutes
+- [ ] Add new pairs that are in the TopX volume of your exchange and apply your desired TRADING_LIMIT
 - [ ] Update config depending on market trend (stop trading altcoins, activate TV mode for USDT-pairs)
 - [ ] Work with multiple config files in different folders for several GB instances
 - [ ] Simple Desktop UI for Windows, Mac and Linux

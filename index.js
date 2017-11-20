@@ -5,8 +5,8 @@ const _ = require("lodash")
 const beautify = require("json-beautify");
 
 // BASIC SETTINGS //
-var checkVolume = false // Check for top BTC-pairs?
-var TopPairs = 5 // Number of TopX volume pairs you want to get from CoinMarketCap
+var checkVolume = true // Check for top BTC-pairs?
+var TopPairs = 10 // Number of TopX volume pairs you want to get from CoinMarketCap
 var Exchange = 'bittrex' // Your exchange, currently bittrex and poloniex are supported
 var Update = 1 // Update interval in minutes - Run an update every X minutes
 
