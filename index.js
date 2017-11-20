@@ -18,9 +18,10 @@ var activateTV = true // Activate TradingView addon to buy/sell USDT-pairs (requ
 
 // MARKET TREND
 var checkTrend = true // Check for overall market trend change?
+var checkCoins = 10 // Check the topX coins for overall change (1 - 100)
 var trendUp = 1.5 // % - Start buying BTC-pairs if overall market trend is up more than X-percent
 var trendDown = 1.5 // % - Stop buying BTC-pairs if overall market trend is down more than X-percent
-var trendTime = 1 // hour(s) - BTC price change
+var trendTime = "1h" // 1h, 24h, 7d change in percent
 var activateTV = true // Activate TradingView addon to buy/sell USDT-pairs (requires TV addon and email alerts)
 
 // PANIC?
@@ -134,9 +135,11 @@ if(checkVolume) {
     });
 }
 if(checkTrend) {
-    request('https://api.coinmarketcap.com/v1/ticker/?limit=100', { json: true }, (err, res, body) => {
-      if (err) { return console.log(err); }
-      var average = _.meanBy(body, (b) => parseInt(b.percent_change_1h))
-      console.log("Top 100 Coins Trend: " + average)
+    request('https://api.coinmarketcap.com/v1/ticker/?limit='+checkCoins, { json: true }, (err, res, body) => {
+        if (err) { return console.log(err); }
+        if (trendTime=="1h") var average = _.meanBy(body, (b) => parseInt(b.percent_change_1h))
+        if (trendTime=="24h") var average = _.meanBy(body, (b) => parseInt(b.percent_change_24h))
+        if (trendTime=="7d") var average = _.meanBy(body, (b) => parseInt(b.percent_change_7d))
+        console.log("Top "+checkCoins+" Coins Trend ("+trendTime+"): " + average)
     });
 }
